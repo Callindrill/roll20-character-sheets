@@ -20,6 +20,15 @@ include fields.pug
         +option('loyalty')
         +option('magic')
         +option('other')
+      //
+        div.colors
+          span.mane
+            label Mane Color:
+              +input('color', 'mane_color')
+          span.coat
+            label Coat Color:
+              +input('color', 'coat_color')
+        
     .friendshipTokens
       h1
         span F
@@ -35,73 +44,99 @@ include fields.pug
       +input('number', 'friendshipTokens')(value='0')
   div
     .stamina
-      h1 Stamina:
-      +fraction('stamina')
+      div
+        h1 Stamina:
+        +fraction('stamina')
+      div
+        +labelledUnderlined('Damage Reduction:'): +input('text', 'damageReduction')
     .traits
       .trait.body
-        label Body
-        +rollButton('body')
+        label.traitName Body
+        +rollButton({
+          attr: 'Body',
+          result: 'body_equation',
+          updowngrade: 'body_updowngrade'
+        })
         +selectDice('body')
+        +updowngrade("body")
+        +input('hidden', 'body_equation')
       .trait.mind 
-        label Mind
-        +rollButton('mind')
+        label.traitName Mind
+        +rollButton({
+          attr: 'Mind',
+          result: 'mind_equation',
+          updowngrade: 'mind_updowngrade'
+        })
         +selectDice('mind')
+        +updowngrade("mind")
+        +input('hidden', 'mind_equation')
       .trait.charm
-        label Charm
-        +rollButton('charm')
+        label.traitName Charm
+        +rollButton({
+          attr: 'Charm',
+          result: 'charm_equation',
+          updowngrade: 'charm_updowngrade'
+        })
         +selectDice('charm')
+        +updowngrade("charm")
+        +input('hidden', 'charm_equation')
         
   div.explodingHooves
     h1 Exploding Hoof Dice:
-    //
-      -
-        var exd12 = '{1d11, floor(1d12/12)*{1d0 + 12, 1d20}k1}k1';
-        var exd10 = '{1d9, floor(1d10/10)*{1d0 + 10, ' + exd12 + '}k1}k1';
-        var exd8 = '{1d7, floor(1d8/8)*{1d0 + 8, ' + exd10 + '}k1}k1';
-        var exd6 = '{1d5, floor(1d6/6)*{1d0 + 6, ' + exd8 + '}k1}k1';
-        var exd4 = '{1d3, floor(1d4/4)*{1d0 + 4, ' + exd6 + '}k1}k1';
     -
-      var exd12 = '{1d11, floor(1d12/12)*{1d0 + 12, 1d20}k1}k1';
-      var exd10 = '{1d9, floor(1d10/10)*{1d0 + 10, 1d11, floor(1d12/12)*{1d0 + 12, 1d20}k1}k1}k1';
-      var exd8 = '{1d7, floor(1d8/8)*{1d0 + 8, 1d9, floor(1d10/10)*{1d0 + 10, 1d11, floor(1d12/12)*{1d0 + 12, 1d20}k1}k1}k1}k1';
-      var exd6 = '{1d5, floor(1d6/6)*{1d0 + 6, 1d7, floor(1d8/8)*{1d0 + 8, 1d9, floor(1d10/10)*{1d0 + 10, 1d11, floor(1d12/12)*{1d0 + 12, 1d20}k1}k1}k1}k1}k1';
-      var exd4 = '{1d3, floor(1d4/4)*{1d0 + 4, 1d5, floor(1d6/6)*{1d0 + 6, 1d7, floor(1d8/8)*{1d0 + 8, 1d9, floor(1d10/10)*{1d0 + 10, 1d11, floor(1d12/12)*{1d0 + 12, 1d20}k1}k1}k1}k1}k1}k1';
+      var exd12 = '1d11, floor(1d12/12)*{{0} + 12, 1d20}k1';
+      var exd10 = '1d9, floor(1d10/10)*{{0} + 10, ' + exd12 + '}k1';
+      var exd8 = '1d7, floor(1d8/8)*{{0} + 8, ' + exd10 + '}k1';
+      var exd6 = '1d5, floor(1d6/6)*{{0} + 6, ' + exd8 + '}k1';
+      var exd4 = '1d3, floor(1d4/4)*{{0} + 4, ' + exd6 + '}k1';
     .explodingHoof
-      +input('hidden', 'exploding_hoof_d4')(value=exd4, style='display: none;')
+      +input('hidden', 'exploding_hoof_d4')(value='{' + exd4 + '}k1', style='display: none;')
       +rollButton('exploding_hoof_d4')
     .explodingHoof
-      +input('hidden', 'exploding_hoof_d6')(value=exd6, style='display: none;')
+      +input('hidden', 'exploding_hoof_d6')(value='{' + exd6 + '}k1', style='display: none;')
       +rollButton('exploding_hoof_d6')
     .explodingHoof
-      +input('hidden', 'exploding_hoof_d8')(value=exd8, style='display: none;')
+      +input('hidden', 'exploding_hoof_d8')(value='{' + exd8 + '}k1', style='display: none;')
       +rollButton('exploding_hoof_d8')
     .explodingHoof
-      +input('hidden', 'exploding_hoof_d10')(value=exd10, style='display: none;')
+      +input('hidden', 'exploding_hoof_d10')(value='{' + exd10 + '}k1', style='display: none;')
       +rollButton('exploding_hoof_d10')
     .explodingHoof
-      +input('hidden', 'exploding_hoof_d12')(value=exd12, style='display: none;')
+      +input('hidden', 'exploding_hoof_d12')(value='{' + exd12 + '}k1', style='display: none;')
       +rollButton('exploding_hoof_d12')  
   
   div
     .talents
-      mixin talent(isCutieMark)
-        - var prefix = isCutieMark ? 'talent_cutieMark_' : '';
-        .talent(class=isCutieMark ? 'talentCutieMark' : '')
+      mixin talent(prefix)
+        - 
+          prefix = prefix || '';
+          var isCutieMark = prefix === 'talent_cutieMark_';
+          var isRacial = prefix === 'talent_racial_';
+        .talent(class=isCutieMark ? 'isCutieMark' : '')
           if(isCutieMark)
-            label CM:
+            label Cutie Mark:
+          else if(isRacial)
+            label Racial:
           else
             label T:
-          button(type='roll', value='&{template:toe} {{charName=@{character_name}}} {{attr=@{' + prefix + 'name}}} {{result=[[@{' + prefix + 'equation}]]}} {{notes=@{' + prefix + 'notes}}}')
+          +rollButton({
+            attr: '@{' + prefix + 'name}',
+            result: prefix + 'equation',
+            notes: prefix + 'notes',
+            updowngrade: prefix + 'updowngrade'
+          })
           +labelledUnderlined(''): +input('text', prefix + 'name')
           +labelledUnderlined('Dice:'): +selectDice(prefix + 'dice')
+          +updowngrade(prefix)
           +labelledUnderlined('Trait'): +selectTrait(prefix + 'trait')
-          +labelledUnderlined('Notes:'): +input('text', prefix + 'notes')
+          +labelledUnderlined('Notes:')(style='width: 2in;'): +input('text', prefix + 'notes')
           +input('hidden', prefix + 'equation')
 
       h1 Talents:
-      +talent(true)
+      +talent('talent_cutieMark_')
+      +talent('talent_racial_')
       +repeating('talents')
-        +talent(false)      
+        +talent('')      
   div
     .quirks
       mixin quirk(isMain)
